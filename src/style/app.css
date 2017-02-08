@@ -256,3 +256,62 @@ background-color: #5cb85c;
 .table-hover>tbody>tr:hover>.list-long-text>span:after{
 background-color:#f5f5f5
 }
+
+.form-thumbnail-progress{
+    position: absolute;
+    bottom: 5px;
+    left: 7px;
+    right: 7px;
+    margin-bottom: 0px;
+    height: 7px;
+    box-shadow: 0 -2px 9px 0px rgba(0,0,0,.35)
+}
+
+.form-thumbnail-progress>.progress-bar{
+    -webkit-box-shadow:none;
+    box-shadow: none;
+}
+
+.form-thumbnail-delete{
+     position: absolute;
+    right: -5px;
+    top: -5px;
+    width: 21px;
+    height: 21px;
+    border-radius: 14px;
+    background-color: #d9534f;
+    color: white;
+    text-align: center;
+    line-height: 21px;
+    font-size: 12px;
+    z-index: 1;
+}
+.form-thumbnail-delete:hover{
+    background-color: #c9302c
+}
+
+.form-thumbnail{
+    position: relative;
+    margin-right: 5px;
+    float: left;
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: #ddd;
+    border-radius: 3px;
+    margin-right: 9px;
+}
+
+.form-thumbnail:after{
+    content: ' '; 
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    box-shadow: inset 0px 0px 3px 1px rgba(0,0,0,.05);
+    pointer-events: none
+}

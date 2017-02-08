@@ -106,18 +106,6 @@
                         }
                     }
                 );
-
-
-
-
-                
-                
-
-
-
-
-
-
             }
 
             /**
@@ -165,6 +153,9 @@
              * @method addNewVersion
              */
             self.addNewVersion = function() {
+                $scope.app.maskParams.project = self.project;
+                $scope.app.maskParams.entitytype = self.entityTypeName;
+                $scope.app.maskParams.refreshPage = self.getInfo;
                 $scope.app.showMask(true, 'pages/submitVersion.html');
             }
 
@@ -298,8 +289,12 @@
         function($http, $scope, $state, $stateParams, util, CONFIG) {
             console.log('submitVersionController');
             var self = this;
-            self.init = function() {
+            self.versionInfo = {}; // 版本信息
+            self.project = $scope.app.maskParams.project;
+            self.entityType = $scope.app.maskParams.entitytype;
 
+            self.init = function() {
+                self.imgs1 = new Imgs([], true);
             }
 
             /**
@@ -309,6 +304,171 @@
              */
             self.cancel = function() {
                 $scope.app.showMask(false);
+            }
+
+            /**
+             * 提交版本
+             *
+             * @method submit
+             */
+            self.submit = function() {
+
+                // 文件必填
+                if(self.imgs1.data.length == 0) {
+                    alert('请上传文件');
+                    return;
+                }
+                console.log(self.imgs1)
+
+                var data = JSON.stringify({
+                    "token": util.getParams('token'),
+                    "project": self.project,
+                    "entitytype": self.entityType,
+                    "version": self.versionInfo.version,
+                    "upgradefileurl": self.imgs1.data[0].src,
+                    "md5sum": self.imgs1.data[0].md5,
+                    "description": self.versionInfo.description,
+                    "upgradeACL":0
+                });
+
+                self.saving = true;
+
+                return $http({
+                    method: 'POST',
+                    url: util.getApiUrl('projectlist', '', 'server'),
+                    data: data
+                }).then(function successCallback(response) {
+                    alert('提交成功');
+                    $scope.app.showMask(false);
+                    $scope.app.maskParams.refreshPage();
+                }, function errorCallback(response) {
+                    alert('连接服务器出错');
+                }).finally(function(value) {
+                    self.saving = false;
+                });
+            }
+
+            // 上传相关
+            self.clickUpload = function(e) {
+                setTimeout(function() {
+                    document.getElementById(e).click();
+                }, 0);
+            }
+
+            function Imgs(imgList, single) {
+                this.initImgList = imgList;
+                this.data = [];
+                this.maxId = 0;
+                this.single = single ? true : false;
+            }
+
+            Imgs.prototype = {
+                initImgs: function() {
+                    var l = this.initImgList;
+                    for (var i = 0; i < l.length; i++) {
+                        this.data[i] = {
+                            "src": l[i].ImageURL,
+                            "fileSize": l[i].ImageSize,
+                            "id": this.maxId++,
+                            "progress": 100
+                        };
+                    }
+                },
+                deleteById: function(id) {
+                    var l = this.data;
+                    for (var i = 0; i < l.length; i++) {
+                        if (l[i].id == id) {
+                            // 如果正在上传，取消上传
+                            if (l[i].progress < 100 && l[i].progress != -1) {
+                                l[i].xhr.abort();
+                            }
+                            l.splice(i, 1);
+                            break;
+                        }
+                    }
+                },
+
+                add: function(xhr, fileName, fileSize) {
+                    this.data.push({
+                        "xhr": xhr,
+                        "fileName": fileName,
+                        "fileSize": fileSize,
+                        "progress": 0,
+                        "id": this.maxId
+                    });
+                    return this.maxId++;
+                },
+
+                update: function(id, progress, leftSize, fileSize) {
+                    for (var i = 0; i < this.data.length; i++) {
+                        var f = this.data[i];
+                        if (f.id === id) {
+                            f.progress = progress;
+                            f.leftSize = leftSize;
+                            f.fileSize = fileSize;
+                            break;
+                        }
+                    }
+                },
+
+                setSrcSizeByXhr: function(xhr, src, size, md5) {
+                    for (var i = 0; i < this.data.length; i++) {
+                        if (this.data[i].xhr == xhr) {
+                            this.data[i].src = src;
+                            this.data[i].fileSize = size;
+                            this.data[i].md5 = md5;
+                            break;
+                        }
+                    }
+                },
+
+                uploadFile: function(e, o) {
+
+                    // 如果这个对象只允许上传一张图片
+                    if (this.single) {
+                        // 删除第二张以后的图片
+                        for (var i = 1; i < this.data.length; i++) {
+                            this.deleteById(this.data[i].id);
+                        }
+                    }
+
+                    var file = $scope[e];
+                    var uploadUrl = CONFIG.uploadImgUrl;
+                    var xhr = new XMLHttpRequest();
+                    var fileId = this.add(xhr, file.name, file.size, xhr);
+                    // self.search();
+
+                    util.uploadFileToUrl(xhr, file, uploadUrl, 'normal',
+                        function(evt) {
+                            $scope.$apply(function() {
+                                if (evt.lengthComputable) {
+                                    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                                    o.update(fileId, percentComplete, evt.total - evt.loaded, evt.total);
+                                    console.log(percentComplete);
+                                }
+                            });
+                        },
+                        function(xhr) {
+                            var ret = JSON.parse(xhr.responseText);
+                            console && console.log(ret);
+                            $scope.$apply(function() {
+                                o.setSrcSizeByXhr(xhr, ret.upload_path, ret.size, ret.md5);
+                                // 如果这个对象只允许上传一张图片
+                                if (o.single && o.data.length > 1) {
+                                    // 删除第一站图片
+                                    o.deleteById(o.data[0].id);
+                                }
+                            });
+                        },
+                        function(xhr) {
+                            $scope.$apply(function() {
+                                o.update(fileId, -1, '', '');
+                            });
+                            console.log('failure');
+                            xhr.abort();
+                        }
+                    );
+                }
             }
         }
     ])

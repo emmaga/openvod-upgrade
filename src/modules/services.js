@@ -88,8 +88,15 @@
                     }
                 },
 
-                /*
+                /**
                  * actionType: "normal" 普通上传, "transcode" 转码上传
+                 * @param xhr
+                 * @param file
+                 * @param uploadUrl
+                 * @param actionType
+                 * @param progressFn
+                 * @param succFn
+                 * @param failFn
                  */
                 'uploadFileToUrl': function(xhr, file, uploadUrl, actionType, progressFn, succFn, failFn){
                     
@@ -108,7 +115,7 @@
 
                     xhr.onreadystatechange = function(response) {
                         if (xhr.readyState == 4 && xhr.status == 200 && xhr.responseText != "") {
-                            console.log(JSON.parse(xhr.responseText));
+                            console.log(xhr.responseText);
                             if(JSON.parse(xhr.responseText).result !== 0) {
                               failFn(xhr);
                             }

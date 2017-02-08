@@ -4,29 +4,51 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button ng-click="submitVersion.cancel()" type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">添加电影</h4>
+                <h4 class="modal-title">提交新版本</h4>
             </div>
-            <form name="submitVersionForm" ng-submit="submitVersionForm.$valid && submitVersion.add()">
+            <form name="submitVersionForm" ng-submit="submitVersionForm.$valid && submitVersion.submit()">
                 <div class="modal-body">
-                    
-                        
                     <div class="form-group">
-                        上传电影
-                        <input type="file" file-model="myFileMovie" data-e="none" required>
-                        <hr class="break-space">
+                        <label>版本文件</label>
+                        <!--酒店logo图修改按钮-->
+                        <a ng-click="submitVersion.clickUpload('upload1')">上传</a>
+                        <br>
+                        <input id="upload1" style="display: none;" type="file" file-model="myFile" data-e="hidenUpload1" />
+                        <a id="hidenUpload1" style="display: none;" ng-click="submitVersion.imgs1.uploadFile('myFile', submitVersion.imgs1)"></a>
+                        <!--酒店logo图修改按钮-->
+                        <!-- 图 -->
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div ng-repeat="apk in submitVersion.imgs1.data" class="form-thumbnail" style="background-image: url(dist/imgs/icon-07.png)">
+                                    <!-- 进度条 -->
+                                    <!-- -1代表失败 -->
+                                    <div class="progress form-thumbnail-progress" ng-show="!({{apk.progress}}==100)">
+                                        <div class="progress-bar progress-bar-success" role="progressbar" style="width: {{apk.progress}}%;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <hr>
+
+                    <!-- 版本号 开始-->
                     <div class="form-group">
-                        上传字幕
-                        <input type="file" file-model="myFileSubtitle" data-e="none">
-                        <hr class="break-space">
+                        <label>版本号</label>
+                        <input type="text" class="form-control" ng-model="submitVersion.versionInfo.version" required placeholder="（必填）">
                     </div>
-                    <hr>
+                    <!-- 版本号 结束-->
+
+                    <!-- 版本描述 开始-->
+                    <div class="form-group">
+                        <label>版本描述</label>
+                        <input type="text" class="form-control" ng-model="submitVersion.versionInfo.description" required placeholder="（必填）">
+                    </div>
+                    <!-- 版本描述 结束-->
                     
                 </div>
                 <div class="modal-footer">
                     <a ng-click="submitVersion.cancel()" class="btn">取消</a>
-                    <button class="btn btn-primary" type="submit">添加</button>
+                    <button ng-disabled="submitVersion.saving" class="btn btn-primary" type="submit">添加</button>
                 </div>
             </form>  
         </div>
