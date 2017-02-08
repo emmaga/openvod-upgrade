@@ -1,11 +1,43 @@
 <div ng-controller="entityDetailController as entityDetail" ng-init="entityDetail.init()" class="col-sm-9 page col-right">
-   entityDetailController<br>
-   <a ng-click="entityDetail.addNewVersion()">＋版本</a><br>
-   加载版本信息中：{{entityDetail.loadingVersion}}<br>
-   加载版本分布情况中：{{entityDetail.loadingVersionPercent}}<br>
-   加载版本升级历史中：{{entityDetail.loadingVersionHistory}}<br>
-   <br>
-   版本信息：{{entityDetail.version}}<br>
-   版本分布情况：{{entityDetail.versionPercent}}<br>
-   版本升级历史：{{entityDetail.versionHistory}}<br>
+    <div class="row">
+        <div class="col-lg-6 col-md-9">
+            <!-- loading -->
+            <p ng-if="{{entityDetail.loadingVersion}}">加载版本信息中...</p>
+            <p ng-if="{{entityDetail.loadingVersionPercent}}">加载版本分布情况中...</p>
+            <p ng-if="{{entityDetail.loadingVersionHistory}}">加载版本升级历史中...</p>
+            <!-- 标题 ： 项目、主体、主体总数-->
+            <label>{{entityDetail.version.project}}&nbsp>&nbsp{{entityDetail.version.entitytype}}&nbsp({{entityDetail.versionPercent.entityCount}}个)</label>
+            <hr>
+            <!-- 当前版本信息 -->
+            <h3>当前版本：ver.{{entityDetail.version.version}}</h3>
+            <p>描述：{{entityDetail.version.description}}</p>
+
+            <label>版本分布</label>
+            <div class="progress">
+
+                <div ng-repeat="versionCount in entityDetail.versionPercent.content" class="progress-bar" role="progressbar" style="min-width: 2em; width: 10%;">
+                v.{{versionCount.version}}:{{versionCount.count}}个
+                </div>
+
+
+            </div>
+
+
+            <!-- 提交版本 -->
+            <a class="btn btn-primary" ng-click="entityDetail.addNewVersion()">＋提交新版本</a>
+            <br>
+            <!-- 标题 ：升级历史-->
+            <hr>
+            <label>版本升级历史</label>
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="versionInfo in entityDetail.versionHistory.versionHistoryList">
+                    <h4>ver.{{versionInfo.version}} </h4>
+                    <p>描述：{{versionInfo.description}} </p>
+                    <p>升级时间：{{versionInfo.submitTimestamp}} </p>
+                    <p>升级数量：{{versionInfo.upgradeSuccNum}}</p>
+                    <p>文件URL：<a href="{{versionInfo.upgradeFileURL}}">{{versionInfo.upgradeFileURL}} </a></p>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>

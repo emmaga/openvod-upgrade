@@ -20,7 +20,7 @@
     <!--body-->
     <div class="container-fluid">
         <div class="row">
-            列表加载中：{{app.loadingProject}}
+            <p ng-if="{{app.loadingProject}}">&nbsp&nbsp列表加载中...<p>
             <!--左侧导航栏-->
             <div class="col-sm-3 col-left">
                 <table ng-table="app.tableParams" ng-init="app.getProjectList()" class="table table-hover table-striped" >
@@ -36,10 +36,11 @@
                         </td>
                     </tr>
                     <tr ng-hide="group.$hideRows" ng-repeat="row in group.data">
-                        <td data-title="'项目列表'" groupable="'project_name'" ng-if="false">
+                        <td data-title="''" groupable="'project_name'" ng-if="false">
                             {{row.project_name}}
                         </td> 
-                        <td data-title="'升级实体'">
+
+                        <td data-title="'项目列表'">
                             <a ui-sref="app.entityDetail({ entityTypeName: row.entity_type_name, project: row.project_name})" ui-sref-active="active">{{row.entity_type_desc}}</a>
                         </td>
                     </tr>
