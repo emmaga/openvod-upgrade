@@ -2,9 +2,9 @@
     <div class="row">
         <div class="col-lg-6 col-md-9">
             <!-- loading -->
-            <p ng-if="{{entityDetail.loadingVersion}}">加载版本信息中...</p>
-            <p ng-if="{{entityDetail.loadingVersionPercent}}">加载版本分布情况中...</p>
-            <p ng-if="{{entityDetail.loadingVersionHistory}}">加载版本升级历史中...</p>
+            <p ng-if="entityDetail.loadingVersion">加载版本信息中...</p>
+            <p ng-if="entityDetail.loadingVersionPercent">加载版本分布情况中...</p>
+            <p ng-if="entityDetail.loadingVersionHistory">加载版本升级历史中...</p>
             <!-- 标题 ： 项目、主体、主体总数-->
             <label>{{entityDetail.version.project}}&nbsp>&nbsp{{entityDetail.version.entitytype}}&nbsp({{entityDetail.versionPercent.entityCount}}个)</label>
             <hr>
@@ -15,8 +15,8 @@
             <label>版本分布</label>
             <div class="progress">
 
-                <div ng-repeat="versionCount in entityDetail.versionPercent.content" class="progress-bar" role="progressbar" style="min-width: 2em; width: 10%;">
-                v.{{versionCount.version}}:{{versionCount.count}}个
+                <div ng-repeat="versionCount in entityDetail.versionPercent.content" class="progress-bar" role="progressbar" style="width:{{versionCount.count / entityDetail.versionPercent.entityCount * 100}}%;">
+                v.{{versionCount.version}}({{versionCount.count}}个)
                 </div>
 
 
