@@ -11,20 +11,23 @@
             <!-- 当前版本信息 -->
             <h3>当前版本：ver.{{entityDetail.version.version}}</h3>
             <p>描述：{{entityDetail.version.description}}</p>
-
-            <label>版本分布</label>
-            <div class="progress">
-
-                <div ng-repeat="versionCount in entityDetail.versionPercent.content" class="progress-bar" role="progressbar" style="width:{{versionCount.count / entityDetail.versionPercent.entityCount * 100}}%;">
-                v.{{versionCount.version}}({{versionCount.count}}个)
+            <!-- 版本分布 -->
+            <label style="margin-top: 2em">版本分布</label>
+            <div class="row" ng-repeat="versionCount in entityDetail.versionPercent.content">
+                <div class="col-xs-1">
+                <label>ver.{{versionCount.version}}</label>
                 </div>
+                <div class="col-xs-11">
+                    <div class="progress" >
+                        <div class="progress-bar " style=" position: relative; min-width:3em;width:{{versionCount.count / entityDetail.versionPercent.entityCount * 100}}%;">
+                        	 {{versionCount.count}} ({{(versionCount.count / entityDetail.versionPercent.entityCount * 100).toFixed(0) }}%)
 
-
+                        </div>
+                    </div>
+                </div>
             </div>
-
-
             <!-- 提交版本 -->
-            <a class="btn btn-primary" ng-click="entityDetail.addNewVersion()">＋提交新版本</a>
+            <a class="btn btn-default btn-block" ng-click="entityDetail.addNewVersion()" style="margin-top: 2em; border-color: #337ab7; color: #337ab7">＋提交新版本</a>
             <br>
             <!-- 标题 ：升级历史-->
             <hr>
