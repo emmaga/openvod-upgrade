@@ -1,0 +1,63 @@
+<div ng-controller="loginController as login" ng-init="login.init()">
+    <!--标题-->
+    <div id="top-nav" class="navbar navbar-inverse navbar-static-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand">清鹤vod运营版－终端升级</a>
+            </div>
+        </div>
+    </div>
+    <!--标题-->
+    <!--换行-->
+    <hr class="break-space-double">
+    <hr class="break-space-double">
+    <hr class="break-space-double">
+    <hr class="break-space-double">
+    <hr class="break-space-double">
+    <hr class="break-space-double">
+    <!--换行-->
+    <!--表单-->
+    <div class="row">
+        <div class="center-block fixed-width-5">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">清鹤vod运营版－终端升级</h3>
+                </div>
+                <div class="panel-body">
+
+                    <form class="form form-vertical" name="loginForm" ng-submit="loginForm.$valid && login.login()">
+                        <!--账号-->
+                        <div class="control-group">
+                            <label>账号</label>
+                            <div class="controls">
+                                <input ng-model="login.userName" class="form-control" type="text" required title="Username required" placeholder="输入帐号">
+                            </div>
+                        </div>
+                        <!--账号-->
+
+                        <!--密码-->
+                        <div class="control-group">
+                            <label>密码</label>
+                            <div class="controls">
+                                <input ng-model="login.password" class="form-control" type="password" required title="Password required" placeholder="输入密码">
+                            </div>
+                        </div>
+                        <!--密码-->
+                        
+                        <hr class="break-space">
+                        <div class="control-group">
+                            <button type="submit" class="btn btn-primary btn-block">登录</button>
+                        </div>
+                        <hr class="break-space-double">
+                        <div class="text-center loading" ng-show="login.loading">登录中...</div>
+                        <style type="text/css">
+                            .loading {color: #999;}
+                        </style>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--表单-->
+</div>

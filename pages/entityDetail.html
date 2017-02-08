@@ -1,0 +1,11 @@
+<div ng-controller="entityDetailController as entityDetail" ng-init="entityDetail.init()" class="col-sm-9 page col-right">
+   entityDetailController<br>
+   <a ng-click="entityDetail.addNewVersion()">＋版本</a><br>
+   加载版本信息中：{{entityDetail.loadingVersion}}<br>
+   加载版本分布情况中：{{entityDetail.loadingVersionPercent}}<br>
+   加载版本升级历史中：{{entityDetail.loadingVersionHistory}}<br>
+   <br>
+   版本信息：{{entityDetail.version}}<br>
+   版本分布情况：{{entityDetail.versionPercent}}<br>
+   版本升级历史：{{entityDetail.versionHistory}}<br>
+</div>
