@@ -314,7 +314,7 @@
             self.submit = function() {
 
                 // 文件必填
-                if(self.imgs1.data.length == 0) {
+                if(!self.imgs1.data[0].md5) {
                     alert('请上传文件');
                     return;
                 }
@@ -335,7 +335,7 @@
 
                 return $http({
                     method: 'POST',
-                    url: util.getApiUrl('projectlist', '', 'server'),
+                    url: util.getApiUrl('submitversion', '', 'server'),
                     data: data
                 }).then(function successCallback(response) {
                     alert('提交成功');
