@@ -53,7 +53,6 @@
         }
     ])
 
-
     .controller('appController', ['$http', '$scope', '$state', '$stateParams', 'NgTableParams', 'util', 'CONFIG',
         function($http, $scope, $state, $stateParams, NgTableParams, util, CONFIG) {
             var self = this;
@@ -63,6 +62,21 @@
 
             self.init = function() {
                 
+            }
+            /**
+             *为指定项目添加升级主体
+             */
+            self.add = function (name) {
+                $scope.app.maskParams = {'projectName':name};
+                $scope.app.showMask(true,'pages/addEntity.html');
+            }
+
+            self.addProject = function () {
+                $scope.app.showMask(true,'pages/addProject.html');
+            }
+
+            self.addEntity = function () {
+                $scope.app.showMask(true,'pages/addAllEntity.html');
             }
 
             /**
@@ -116,7 +130,8 @@
              * @param maskUrl {String} 弹窗url地址
              */
             self.showMask = function(ifShowMask, maskUrl){
-                $scope.app.maskUrl = ifShowMask ? maskUrl : '';  
+                $scope.app.maskUrl = ifShowMask ? maskUrl : '';
+                $scope.app.showMaskClass = ifShowMask ? true : false;
                 console&&console.log($scope.app.maskUrl);
             }
 
@@ -127,6 +142,187 @@
 
         }
     ])
+
+    .controller('addEntityController',['$http','$state','$scope','util',function ($http,$state,$scope,util) {
+        var self = this;
+        self.init = function () {
+            self.projectName = $scope.app.maskParams.projectName;
+            self.nowEntityList = []; //当前项目已有的升级主体
+            self.allEntityList = []; //全部升级主体
+            self.loadAllEntityList();
+            self.saving = false;
+            self.selected = [];
+        }
+
+        self.cancel = function () {
+            $scope.app.showMask(false);
+        }
+        self.loadEntityList = function (name) {
+            var data = JSON.stringify({
+                "token": util.getParams('token')
+            });
+            $http({
+                method: 'POST',
+                url: util.getApiUrl('projectlist', '', 'server'),
+                data: data
+            }).then(function successCallback(response) {
+                var data = response.data.content;
+                data.forEach(function (val,idx,arr) {
+                    if(val.project_name == name){
+                        self.nowEntityList.push(val.entity_type_id);
+                        self.markEntity(val.entity_type_id);
+                    }
+                })
+            }, function errorCallback(response) {
+                alert('连接服务器出错');
+            }).finally(function(value) {
+
+            });
+        }
+        self.loadAllEntityList = function () {
+            var data = JSON.stringify({
+                "action":"getEntityTypeList",
+                "token":util.getParams('token')
+            });
+            $http({
+                method:'POST',
+                url: util.getApiUrl('entitytype', '', 'server'),
+                data: data
+            }).then(function successCallback(response) {
+                self.allEntityList = response.data.entity_list;
+                self.loadEntityList(self.projectName);
+            },function errorCallback(response) {
+                alert('连接服务器出错');
+            }).finally(function (value) {
+
+            })
+        }
+        self.markEntity = function (id) {
+            self.allEntityList.forEach(function (val,idx,arr) {
+                if(val.entity_type_id == id){
+                    val.hasAdded = true;
+                }
+            })
+        }
+        self.save = function () {
+            var data = JSON.stringify({
+                "action":"addProjectEntitytype",
+                "token":util.getParams('token'),
+                "project":self.projectName,
+                "entity_type_list":self.selected
+            });
+            $http({
+                method:'POST',
+                url: util.getApiUrl('addprojectentitytype', '', 'server'),
+                data: data
+            }).then(function successCallback(response) {
+                if(response.data.rescode == "200"){
+                    alert("分配成功");
+                    $state.reload();
+                }else {
+                    alert("分配失败")
+                }
+            },function errorCallback(response) {
+                alert('连接服务器出错');
+            }).finally(function (value) {
+                self.saving = false;
+            })
+
+        }
+        var updateSelected = function(action,id){
+            if(action == 'add' && self.selected.indexOf(id) == -1){
+                self.selected.push(id);
+                }
+            if(action == 'remove' && self.selected.indexOf(id)!=-1){
+                var idx = self.selected.indexOf(id);
+                self.selected.splice(idx,1);
+                }
+            }
+        $scope.updateSelection = function($event, id){
+            var checkbox = $event.target;
+            var action = (checkbox.checked?'add':'remove');
+            updateSelected(action,id,checkbox.name);
+            }
+        $scope.isSelected = function(id){
+            return self.selected.indexOf(id)>=0;
+            }
+    }])
+
+    .controller('addAllEntityController',['$http','$scope','$state','util',function ($http,$scope,$state,util) {
+            var self = this;
+            self.init = function () {
+                self.name = '';
+                self.nameZh = '';
+            };
+            self.cancel = function () {
+                $scope.app.showMask(false);
+            }
+            self.save = function () {
+                self.saving = true;
+                var data = JSON.stringify({
+                    "action":"addEntityType",
+                    "token":util.getParams('token'),
+                    "entity_type" :{
+                        "entity_type_name": self.name,
+                        "entity_type_desc": self.nameZh
+                    }
+                });
+                $http({
+                    method: 'POST',
+                    url: util.getApiUrl('entitytype', '', 'server'),
+                    data: data
+                }).then(function successCallback(response) {
+                    console.log(response);
+                    if(response.data.rescode == '200'){
+                        alert('添加成功');
+                        $state.reload();
+                    }
+                },function errorCallback(response) {
+                    alert('连接服务器出错');
+                }).finally(function (value) {
+                    self.saving = false;
+                });
+            }
+    }])
+
+    .controller('addProjectController',['$http','$scope','$state','util',function ($http,$scope,$state,util) {
+        var self = this;
+        self.init = function () {
+            self.name = '';
+            self.nameZh = '';
+        };
+        self.cancel = function () {
+            $scope.app.showMask(false);
+        }
+        self.save = function () {
+            self.saving = true;
+            var data = JSON.stringify({
+                "action":"addProject",
+                "token":util.getParams('token'),
+                "project" :{
+                    "project_name": self.name,
+                    "project_name_zh": self.nameZh
+                }
+            });
+            $http({
+                method: 'POST',
+                url: util.getApiUrl('addproject', '', 'server'),
+                data: data
+            }).then(function successCallback(response) {
+                console.log(response);
+                if(response.data.rescode == '200'){
+                    alert('添加成功');
+                    $state.reload();
+                }else {
+                    alert('添加失败');
+                }
+            },function errorCallback(response) {
+                alert('连接服务器出错');
+            }).finally(function (value) {
+                self.saving = false;
+            });
+        }
+    }])
 
     .controller('entityDetailController', ['$http', '$scope', '$state', '$q', '$stateParams', 'util', 'CONFIG',
         function($http, $scope, $state, $q, $stateParams, util, CONFIG) {

@@ -1,0 +1,35 @@
+<div ng-controller="addEntityController as addEntity" ng-init="addEntity.init()" class="modal-dialog modal-sm autoscroll">
+    <div class="modal-content">
+        <!-- loading -->
+        <!-- form -->
+        <form novalidate name="addEntityForm" ng-submit="addEntityForm.$valid && addEntity.save()">
+            <!--header-->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" ng-click="addEntity.cancel()">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h5 class="modal-title">分配主体</h5>
+            </div>
+            <!--header end-->
+            <!--body-->
+            <ul class="modal-body">
+                <li ng-repeat="item in addEntity.allEntityList" class="entity-list" ng-class="{true:'disabledList',false:''}[item.hasAdded]">
+                    <label><input ng-disabled="item.hasAdded" ng-checked="isSelected(item.entity_type_id)" ng-click="updateSelection($event,item.entity_type_id)" name="{{item.entity_type_id}}" class="entity-container" type="checkbox"/>{{item.entity_type_desc}}</label>
+                </li>
+            </ul>
+            <!--body end-->
+            <!--footer-->
+            <div class="modal-footer">
+                <!-- 取消 -->
+                <button type="button" class="btn btn-default btn-sm" ng-click="addEntity.cancel()">取消</button>
+                <!-- 保存 -->
+                <button type="submit" style="line-height: 15px;" class="btn btn-primary  btn-sm" ng-disabled="addEntityForm.$invalid || addEntity.saving">
+                    <i class="icon ion-ios-checkmark-outline"></i> 确定
+                </button>
+            </div>
+            <!--footer end-->
+
+        </form>
+    </div>
+</div>

@@ -23,6 +23,10 @@
             <p ng-if="app.loadingProject">&nbsp&nbsp列表加载中...<p>
             <!--左侧导航栏-->
             <div class="col-sm-3 col-left">
+                <div class="btn-group" style="margin-bottom: 10px;">
+                    <button ng-click="app.addProject()" type="button" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-plus"></i> 添加项目</button>
+                    <button ng-click="app.addEntity()" type="button" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-plus"></i> 添加主体</button>
+                </div>
                 <table ng-table="app.tableParams" ng-init="app.getProjectList()" class="table table-hover table-striped" >
                     <colgroup>
                         <col width="100%" />
@@ -33,14 +37,17 @@
                                 <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
                                 <strong>{{ group.value }}</strong>
                             </a>
+                            <button class="btn btn-default btn-xs" style="float: right;" ng-click="app.add(group.value); $event.preventDefault(); $event.stopPropagation();">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
                         </td>
                     </tr>
-                    <tr ng-hide="group.$hideRows" ng-repeat="row in group.data">
-                        <td data-title="'项目列表'" groupable="'project_name'" ng-if="false">
+                    <tr ng-hide="group.$hideRows || row.entity_type_id==-1" ng-repeat="row in group.data">
+                        <td data-title="'项目列表'" groupable="'project_name'" ng-if="false" >
                             {{row.project_name}}
-                        </td> 
+                        </td>
 
-                        <td data-title="'升级主体'">
+                        <td data-title="' '">
                             <a ui-sref="app.entityDetail({ entityTypeName: row.entity_type_name, project: row.project_name})" ui-sref-active="active">{{row.entity_type_desc}}</a>
                         </td>
                     </tr>
@@ -59,6 +66,18 @@
     <!--body-->
 
     <!-- 弹窗层 -->
-    <div ng-include="app.maskUrl" class="autoscroll"></div>
+    <div class="autoscroll modal fade" ng-class="{'in':(app.showMaskClass)}">
+        <!-- 弹窗背景 -->
+        <div class="modal-backdrop fade in"></div>
+        <ng-include src="app.maskUrl">
+            <!--
+            -
+            -
+                弹窗内容
+            -
+            -
+            -->
+        </ng-include>
+    </div>
     <!-- 弹窗层 -->
 </div>
