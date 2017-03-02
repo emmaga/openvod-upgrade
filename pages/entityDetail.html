@@ -14,10 +14,10 @@
             <!-- 版本分布 -->
             <label style="margin-top: 2em">版本分布</label>
             <div class="row" ng-repeat="versionCount in entityDetail.versionPercent.content">
-                <div class="col-xs-1">
+                <div class="col-xs-2" style="min-width: 70px;">
                 <label>ver.{{versionCount.version}}</label>
                 </div>
-                <div class="col-xs-11">
+                <div class="col-xs-10">
                     <div class="progress" >
                         <div class="progress-bar " style=" position: relative; min-width:3em;width:{{versionCount.count / entityDetail.versionPercent.entityCount * 100}}%;">
                         	 {{versionCount.count}} ({{(versionCount.count / entityDetail.versionPercent.entityCount * 100).toFixed(0) }}%)
