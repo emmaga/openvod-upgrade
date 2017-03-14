@@ -59,7 +59,7 @@
 
             self.maskUrl = ''; // 弹窗层加载页面url
             self.maskParams = {}; // 弹窗层参数
-
+            self.projectList;
             self.init = function() {
                 
             }
@@ -90,7 +90,7 @@
                         page: 1, 
                         count: 100000000,
                         url: '',
-                        group: "project_name"
+                        group: "project_id"
                     }, 
                     {
                         counts: [],
@@ -116,6 +116,15 @@
                                 alert('连接服务器出错');
                             }).finally(function(value) {
                                 self.loadingProject = false;
+                                self.setName = function (id) {
+                                    var name = "123";
+                                    self.projectList.content.forEach(function (val) {
+                                        if(val.project_id == id){
+                                            name = val.project_name_zh;
+                                        };
+                                    });
+                                    return name;
+                                };
                             });
                         }
                     }
