@@ -66,7 +66,8 @@
             /**
              *为指定项目添加升级主体
              */
-            self.add = function (name) {
+            self.add = function (id) {
+                var name = self.getName(id);
                 $scope.app.maskParams = {'projectName':name};
                 $scope.app.showMask(true,'pages/addEntity.html');
             }
@@ -117,10 +118,19 @@
                             }).finally(function(value) {
                                 self.loadingProject = false;
                                 self.setName = function (id) {
-                                    var name = "123";
+                                    var name;
                                     self.projectList.content.forEach(function (val) {
                                         if(val.project_id == id){
                                             name = val.project_name_zh;
+                                        };
+                                    });
+                                    return name;
+                                };
+                                self.getName = function (id) {
+                                    var name;
+                                    self.projectList.content.forEach(function (val) {
+                                        if(val.project_id == id){
+                                            name = val.project_name;
                                         };
                                     });
                                     return name;
