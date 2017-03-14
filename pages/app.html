@@ -35,7 +35,7 @@
                         <td colspan="1">
                             <a href="" ng-click="group.$hideRows = !group.$hideRows">
                                 <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
-                                <strong>{{ group.value }}</strong>
+                                <strong>{{ app.setName(group.value) }}</strong>
                             </a>
                             <button class="btn btn-default btn-xs" style="float: right;" ng-click="app.add(group.value); $event.preventDefault(); $event.stopPropagation();">
                                 <span class="glyphicon glyphicon-plus"></span>
@@ -43,7 +43,7 @@
                         </td>
                     </tr>
                     <tr ng-hide="group.$hideRows || row.entity_type_id==-1" ng-repeat="row in group.data">
-                        <td data-title="'项目列表'" groupable="'project_name'" ng-if="false" >
+                        <td data-title="'项目列表'" groupable="'project_id'" ng-if="false" >
                             {{row.project_name}}
                         </td>
 
